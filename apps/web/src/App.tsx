@@ -1,8 +1,20 @@
 import { useEffect } from 'react'
-import { startPolling, useDashboard } from './store'
+import { startPolling } from './store'
+import { Overview } from './sections/Overview'
+import { UsageGraph } from './sections/UsageGraph'
+import { Breakdown } from './sections/Breakdown'
+import { QuotaHistory } from './sections/QuotaHistory'
+import { Sessions } from './sections/Sessions'
 
 export function App() {
-  const summary = useDashboard((s) => s.summary)
   useEffect(() => startPolling(), [])
-  return <pre>{JSON.stringify(summary, null, 2)}</pre>
+  return (
+    <main style={{ padding: '1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
+      <Overview />
+      <UsageGraph />
+      <Breakdown />
+      <QuotaHistory />
+      <Sessions />
+    </main>
+  )
 }
