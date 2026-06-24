@@ -1,0 +1,68 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/generated/client"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model UsageEvent {
+  id                  BigInt   @id @default(autoincrement())
+  requestId           String
+  lineUuid            String
+  ts                  DateTime
+  sessionId           String
+  projectPath         String
+  gitBranch           String?
+  model               String
+  inputTokens         Int
+  outputTokens        Int
+  cacheCreate1hTokens Int
+  cacheCreate5mTokens Int
+  cacheReadTokens     Int
+  webSearchCount      Int
+  webFetchCount       Int
+  serviceTier         String?
+  costUsd             Float
+
+  @@unique([requestId, lineUuid])
+  @@index([ts])
+  @@index([model])
+  @@index([sessionId])
+  @@index([projectPath])
+}
+
+model IngestCursor {
+  filePath  String   @id
+  inode     String
+  bytesRead BigInt
+  lastUuid  String?
+  updatedAt DateTime @updatedAt
+}
+
+model QuotaSnapshot {
+  id               BigInt   @id @default(autoincrement())
+  capturedAt       DateTime @default(now())
+  fiveHourUsed     Float
+  fiveHourLimit    Float
+  fiveHourResetsAt DateTime?
+  weeklyUsed       Float
+  weeklyLimit      Float
+  weeklyResetsAt   DateTime?
+  extraCredits     Float
+  subscriptionType String?
+  rateLimitTier    String?
+  stale            Boolean  @default(false)
+  raw              Json
+
+  @@index([capturedAt])
+}
+
+model OAuthState {
+  id          Int      @id @default(1)
+  accessToken String
+  expiresAt   BigInt
+  updatedAt   DateTime @updatedAt
+}
