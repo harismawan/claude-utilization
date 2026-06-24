@@ -26,6 +26,13 @@ export const quotaRepo = {
     return db.quotaSnapshot.findMany({
       where: { capturedAt: { gte: since }, stale: false },
       orderBy: { capturedAt: 'asc' },
+      select: {
+        capturedAt: true,
+        fiveHourUsed: true,
+        fiveHourLimit: true,
+        weeklyUsed: true,
+        weeklyLimit: true,
+      },
     })
   },
 }

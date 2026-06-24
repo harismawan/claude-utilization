@@ -57,3 +57,38 @@ describe('routes', () => {
     expect(q).toHaveProperty('connected')
   })
 })
+
+describe('quota history', () => {
+  let snapshotId: bigint
+
+  beforeAll(async () => {
+    const snap = await db.quotaSnapshot.create({
+      data: {
+        fiveHourUsed: 10,
+        fiveHourLimit: 100,
+        weeklyUsed: 5,
+        weeklyLimit: 100,
+        extraCredits: 0,
+        stale: false,
+        raw: {},
+      },
+    })
+    snapshotId = snap.id
+  })
+
+  afterAll(async () => {
+    await db.quotaSnapshot.deleteMany()
+  })
+
+  it('GET /api/quota/history returns 200 with no id/raw fields', async () => {
+    const res = await app.handle(new Request('http://localhost/api/quota/history?range=all'))
+    expect(res.status).toBe(200)
+    const body = await res.json()
+    expect(Array.isArray(body)).toBe(true)
+    expect(body.length).toBeGreaterThanOrEqual(1)
+    const row = body[0]
+    expect(typeof row.fiveHourUsed).toBe('number')
+    expect(row).not.toHaveProperty('id')
+    expect(row).not.toHaveProperty('raw')
+  })
+})
