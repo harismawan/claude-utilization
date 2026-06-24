@@ -35,9 +35,11 @@ function window(w: any): Window {
   if (used != null && limit != null) {
     return { used: num(used), limit: num(limit), resetsAt: date(pick(w, ['resets_at', 'resetsAt'])) }
   }
-  // utilization fraction → percentage of 100
+  // utilization: API may return a fraction (0.0–1.0) or a percentage (0–100).
+  // If the value is > 1 it's already a percentage; otherwise scale it.
   const util = num(pick(w, ['utilization', 'used_fraction']))
-  return { used: util * 100, limit: 100, resetsAt: date(pick(w, ['resets_at', 'resetsAt'])) }
+  const utilUsed = util > 1 ? util : util * 100
+  return { used: utilUsed, limit: 100, resetsAt: date(pick(w, ['resets_at', 'resetsAt'])) }
 }
 
 export function normalizeUsage(raw: unknown): NormalizedQuota {
