@@ -1,0 +1,5 @@
+{
+  "name": "claude-util-web",
+  "private": true,
+  "type": "module"
+}

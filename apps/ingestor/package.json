@@ -1,0 +1,5 @@
+{
+  "name": "claude-util-ingestor",
+  "private": true,
+  "type": "module"
+}

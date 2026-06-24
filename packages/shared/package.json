@@ -1,0 +1,5 @@
+{
+  "name": "claude-util-shared",
+  "private": true,
+  "type": "module"
+}

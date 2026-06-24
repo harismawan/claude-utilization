@@ -1,0 +1,5 @@
+{
+  "name": "claude-util-api",
+  "private": true,
+  "type": "module"
+}

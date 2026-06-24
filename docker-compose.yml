@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: claude
+      POSTGRES_PASSWORD: claude
+      POSTGRES_DB: claude_util
+    ports: ["5432:5432"]
+    volumes: ["claude_util_pg:/var/lib/postgresql/data"]
+volumes:
+  claude_util_pg:
