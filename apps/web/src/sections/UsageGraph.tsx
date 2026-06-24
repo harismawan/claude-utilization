@@ -1,7 +1,7 @@
 import { Card, SegmentedControl } from '@harismawan/stamp-ui'
 import { useState } from 'react'
-import { UsageAreaChart } from '../components/UsageAreaChart'
 import { Section, SectionTitle } from '../components/Section'
+import { UsageAreaChart } from '../components/UsageAreaChart'
 import { useDashboard } from '../store'
 
 export function UsageGraph() {

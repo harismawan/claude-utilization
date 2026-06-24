@@ -33,7 +33,11 @@ function window(w: any): Window {
   const used = pick(w, ['used', 'usage'])
   const limit = pick(w, ['limit', 'cap'])
   if (used != null && limit != null) {
-    return { used: num(used), limit: num(limit), resetsAt: date(pick(w, ['resets_at', 'resetsAt'])) }
+    return {
+      used: num(used),
+      limit: num(limit),
+      resetsAt: date(pick(w, ['resets_at', 'resetsAt'])),
+    }
   }
   // utilization: API may return a fraction (0.0–1.0) or a percentage (0–100).
   // If the value is > 1 it's already a percentage; otherwise scale it.

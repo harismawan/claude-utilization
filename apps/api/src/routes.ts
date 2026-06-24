@@ -1,9 +1,11 @@
 import { Elysia, t } from 'elysia'
-import { quotaRepo, usageRepo } from './repositories'
 import { type RangeKey, sinceFor } from './ranges'
+import { quotaRepo, usageRepo } from './repositories'
 
 const rangeQuery = t.Object({
-  range: t.Optional(t.Union([t.Literal('today'), t.Literal('7d'), t.Literal('30d'), t.Literal('all')])),
+  range: t.Optional(
+    t.Union([t.Literal('today'), t.Literal('7d'), t.Literal('30d'), t.Literal('all')]),
+  ),
 })
 
 export function buildApp() {
@@ -34,9 +36,13 @@ export function buildApp() {
     .get('/models', ({ query }) => usageRepo.byModel(sinceFor((query.range as RangeKey) ?? '7d')), {
       query: rangeQuery,
     })
-    .get('/projects', ({ query }) => usageRepo.byProject(sinceFor((query.range as RangeKey) ?? '7d')), {
-      query: rangeQuery,
-    })
+    .get(
+      '/projects',
+      ({ query }) => usageRepo.byProject(sinceFor((query.range as RangeKey) ?? '7d')),
+      {
+        query: rangeQuery,
+      },
+    )
     .get('/sessions', () => usageRepo.recentSessions(25))
     .get('/blocks', ({ query }) => usageRepo.blocks(sinceFor((query.range as RangeKey) ?? '7d')), {
       query: rangeQuery,
@@ -55,7 +61,11 @@ export function buildApp() {
         rateLimitTier: q.rateLimitTier,
       }
     })
-    .get('/quota/history', ({ query }) => quotaRepo.history(sinceFor((query.range as RangeKey) ?? '7d')), {
-      query: rangeQuery,
-    })
+    .get(
+      '/quota/history',
+      ({ query }) => quotaRepo.history(sinceFor((query.range as RangeKey) ?? '7d')),
+      {
+        query: rangeQuery,
+      },
+    )
 }

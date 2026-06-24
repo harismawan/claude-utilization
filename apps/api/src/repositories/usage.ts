@@ -10,9 +10,24 @@ export interface SummaryRow {
   requests: number
   sessions: number
 }
-export interface TimePoint { bucket: string; model: string; costUsd: number; totalTokens: number }
-export interface ModelRow { model: string; costUsd: number; totalTokens: number; requests: number }
-export interface ProjectRow { projectPath: string; costUsd: number; totalTokens: number; requests: number }
+export interface TimePoint {
+  bucket: string
+  model: string
+  costUsd: number
+  totalTokens: number
+}
+export interface ModelRow {
+  model: string
+  costUsd: number
+  totalTokens: number
+  requests: number
+}
+export interface ProjectRow {
+  projectPath: string
+  costUsd: number
+  totalTokens: number
+  requests: number
+}
 export interface SessionRow {
   sessionId: string
   projectPath: string
@@ -104,7 +119,9 @@ export const usageRepo = {
   },
 
   async byModel(since: Date): Promise<ModelRow[]> {
-    const rows = await db.$queryRaw<{ model: string; cost: number; tokens: bigint; reqs: bigint }[]>`
+    const rows = await db.$queryRaw<
+      { model: string; cost: number; tokens: bigint; reqs: bigint }[]
+    >`
       SELECT "model",
              SUM("costUsd") AS cost,
              SUM("inputTokens" + "outputTokens" + "cacheReadTokens" + "cacheCreate1hTokens" + "cacheCreate5mTokens") AS tokens,
@@ -172,7 +189,11 @@ export const usageRepo = {
         ts: r.ts,
         costUsd: r.costUsd,
         totalTokens:
-          r.inputTokens + r.outputTokens + r.cacheReadTokens + r.cacheCreate1hTokens + r.cacheCreate5mTokens,
+          r.inputTokens +
+          r.outputTokens +
+          r.cacheReadTokens +
+          r.cacheCreate1hTokens +
+          r.cacheCreate5mTokens,
       })),
     )
   },

@@ -4,15 +4,31 @@ import { db } from '../db'
 import { usageRepo } from './usage'
 
 const mk = (over: Partial<ParsedUsageEvent>): ParsedUsageEvent => ({
-  requestId: 'r', lineUuid: 'u', ts: new Date('2026-06-12T09:00:00Z'),
-  sessionId: 's1', projectPath: '/p', gitBranch: 'main', model: 'claude-opus-4-8',
-  inputTokens: 100, outputTokens: 10, cacheCreate1hTokens: 0, cacheCreate5mTokens: 0,
-  cacheReadTokens: 0, webSearchCount: 0, webFetchCount: 0, serviceTier: 'standard', costUsd: 1,
+  requestId: 'r',
+  lineUuid: 'u',
+  ts: new Date('2026-06-12T09:00:00Z'),
+  sessionId: 's1',
+  projectPath: '/p',
+  gitBranch: 'main',
+  model: 'claude-opus-4-8',
+  inputTokens: 100,
+  outputTokens: 10,
+  cacheCreate1hTokens: 0,
+  cacheCreate5mTokens: 0,
+  cacheReadTokens: 0,
+  webSearchCount: 0,
+  webFetchCount: 0,
+  serviceTier: 'standard',
+  costUsd: 1,
   ...over,
 })
 
-beforeAll(async () => { await db.usageEvent.deleteMany() })
-afterAll(async () => { await db.usageEvent.deleteMany() })
+beforeAll(async () => {
+  await db.usageEvent.deleteMany()
+})
+afterAll(async () => {
+  await db.usageEvent.deleteMany()
+})
 
 describe('usageRepo', () => {
   it('upserts events and dedups on (requestId, lineUuid)', async () => {

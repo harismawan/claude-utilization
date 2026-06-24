@@ -15,7 +15,11 @@ export interface Block {
 
 const FIVE_HOURS = 5 * 60 * 60 * 1000
 
-export function computeBlocks(events: BlockInput[], now = new Date(), windowMs = FIVE_HOURS): Block[] {
+export function computeBlocks(
+  events: BlockInput[],
+  now = new Date(),
+  windowMs = FIVE_HOURS,
+): Block[] {
   const sorted = [...events].sort((a, b) => a.ts.getTime() - b.ts.getTime())
   const blocks: Block[] = []
   let cur: Block | null = null

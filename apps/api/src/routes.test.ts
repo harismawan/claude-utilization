@@ -6,19 +6,38 @@ import { buildApp } from './routes'
 
 const app = buildApp()
 const mk = (over: Partial<ParsedUsageEvent>): ParsedUsageEvent => ({
-  requestId: 'r', lineUuid: 'u', ts: new Date(), sessionId: 's1', projectPath: '/p',
-  gitBranch: 'main', model: 'claude-opus-4-8', inputTokens: 100, outputTokens: 10,
-  cacheCreate1hTokens: 0, cacheCreate5mTokens: 0, cacheReadTokens: 0, webSearchCount: 0,
-  webFetchCount: 0, serviceTier: 'standard', costUsd: 1, ...over,
+  requestId: 'r',
+  lineUuid: 'u',
+  ts: new Date(),
+  sessionId: 's1',
+  projectPath: '/p',
+  gitBranch: 'main',
+  model: 'claude-opus-4-8',
+  inputTokens: 100,
+  outputTokens: 10,
+  cacheCreate1hTokens: 0,
+  cacheCreate5mTokens: 0,
+  cacheReadTokens: 0,
+  webSearchCount: 0,
+  webFetchCount: 0,
+  serviceTier: 'standard',
+  costUsd: 1,
+  ...over,
 })
 
 beforeAll(async () => {
   await db.usageEvent.deleteMany()
-  await usageRepo.upsertEvents([mk({ requestId: 'a', lineUuid: '1' }), mk({ requestId: 'b', lineUuid: '1', model: 'claude-haiku-4-5' })])
+  await usageRepo.upsertEvents([
+    mk({ requestId: 'a', lineUuid: '1' }),
+    mk({ requestId: 'b', lineUuid: '1', model: 'claude-haiku-4-5' }),
+  ])
 })
-afterAll(async () => { await db.usageEvent.deleteMany() })
+afterAll(async () => {
+  await db.usageEvent.deleteMany()
+})
 
-const get = (path: string) => app.handle(new Request(`http://localhost${path}`)).then((r) => r.json())
+const get = (path: string) =>
+  app.handle(new Request(`http://localhost${path}`)).then((r) => r.json())
 
 describe('routes', () => {
   it('GET /api/health', async () => {

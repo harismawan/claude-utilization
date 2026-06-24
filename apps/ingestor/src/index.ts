@@ -1,8 +1,8 @@
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import pino from 'pino'
-import { ingestOnce } from './tailer'
 import { pollQuotaOnce } from './quota'
+import { ingestOnce } from './tailer'
 
 const log = pino({ transport: { target: 'pino-pretty' } })
 const CLAUDE_DIR = process.env.CLAUDE_DIR || join(homedir(), '.claude')

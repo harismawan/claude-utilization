@@ -66,7 +66,17 @@ export const useDashboard = create<DashState>((set, getState) => ({
           api.quota(),
           api.quotaHistory(range),
         ])
-      set({ summary, timeseries, models, projects, sessions, blocks, quota, quotaHistory, loading: false })
+      set({
+        summary,
+        timeseries,
+        models,
+        projects,
+        sessions,
+        blocks,
+        quota,
+        quotaHistory,
+        loading: false,
+      })
     } catch (err) {
       set({ error: String(err), loading: false })
     }

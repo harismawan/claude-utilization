@@ -1,5 +1,14 @@
 import { colorForModel } from 'claude-util-shared'
-import { Area, AreaChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import type { TimePoint } from '../api'
 
 type Row = { bucket: string } & Record<string, number | string>
@@ -33,7 +42,15 @@ export function UsageAreaChart({
         <Tooltip />
         <Legend />
         {models.map((m) => (
-          <Area key={m} type="monotone" dataKey={m} stackId="1" stroke={colorForModel(m)} fill={colorForModel(m)} fillOpacity={0.5} />
+          <Area
+            key={m}
+            type="monotone"
+            dataKey={m}
+            stackId="1"
+            stroke={colorForModel(m)}
+            fill={colorForModel(m)}
+            fillOpacity={0.5}
+          />
         ))}
       </AreaChart>
     </ResponsiveContainer>

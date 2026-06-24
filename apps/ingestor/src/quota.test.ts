@@ -22,14 +22,19 @@ beforeAll(async () => {
     }),
   )
 })
-afterAll(async () => { await db.quotaSnapshot.deleteMany() })
+afterAll(async () => {
+  await db.quotaSnapshot.deleteMany()
+})
 
 describe('pollQuotaOnce', () => {
   it('writes a fresh snapshot on success', async () => {
     const fakeFetch = (async () =>
-      new Response(JSON.stringify({ five_hour: { utilization: 0.3 }, seven_day: { utilization: 0.1 } }), {
-        status: 200,
-      })) as unknown as typeof fetch
+      new Response(
+        JSON.stringify({ five_hour: { utilization: 0.3 }, seven_day: { utilization: 0.1 } }),
+        {
+          status: 200,
+        },
+      )) as unknown as typeof fetch
     const out = await pollQuotaOnce(dir, { fetchImpl: fakeFetch })
     expect(out).toBe('ok')
     const snap = await db.quotaSnapshot.findFirst({ orderBy: { capturedAt: 'desc' } })

@@ -2,16 +2,24 @@
   "name": "claude-utilization",
   "private": true,
   "type": "module",
-  "workspaces": ["apps/api", "apps/ingestor", "apps/web", "packages/shared"],
+  "workspaces": [
+    "apps/api",
+    "apps/ingestor",
+    "apps/web",
+    "packages/shared"
+  ],
   "scripts": {
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "test": "bun test",
+    "test": "bun test packages/shared && bun --env-file=.env test apps/api && bun --env-file=.env test apps/ingestor && bun test apps/web",
     "db:migrate": "bun --filter claude-util-api db:migrate",
     "db:generate": "bun --filter claude-util-api db:generate",
     "dev:api": "bun --filter claude-util-api dev",
     "dev:ingestor": "bun --filter claude-util-ingestor dev",
-    "dev:web": "bun --filter claude-util-web dev"
+    "dev:web": "bun --filter claude-util-web dev",
+    "dev": "bun run dev:api & bun run dev:ingestor & bun run dev:web & wait"
   },
-  "devDependencies": { "@biomejs/biome": "^2.5.0" }
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.0"
+  }
 }

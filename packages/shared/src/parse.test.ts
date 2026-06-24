@@ -22,7 +22,9 @@ describe('parseUsageLine', () => {
   })
 
   it('returns null for a user line (no usage)', () => {
-    expect(parseUsageLine('{"type":"user","uuid":"u-2","message":{"role":"user"}}', '/p')).toBeNull()
+    expect(
+      parseUsageLine('{"type":"user","uuid":"u-2","message":{"role":"user"}}', '/p'),
+    ).toBeNull()
   })
 
   it('returns null for malformed JSON', () => {

@@ -1,10 +1,5 @@
 import { oauthRepo, quotaRepo } from 'claude-util-api/repositories'
-import {
-  fetchUsage,
-  needsRefresh,
-  readCredentials,
-  refreshAccessToken,
-} from './oauth'
+import { fetchUsage, needsRefresh, readCredentials, refreshAccessToken } from './oauth'
 
 export interface PollDeps {
   fetchImpl?: typeof fetch

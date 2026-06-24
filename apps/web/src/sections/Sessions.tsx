@@ -1,6 +1,6 @@
 import { Card, DataTable } from '@harismawan/stamp-ui'
-import { fmtTokens, fmtUsd } from '../format'
 import { Section, SectionTitle } from '../components/Section'
+import { fmtTokens, fmtUsd } from '../format'
 import { useDashboard } from '../store'
 
 export function Sessions() {

@@ -1,7 +1,7 @@
 import { Card, DataTable } from '@harismawan/stamp-ui'
 import { CostDonut } from '../components/CostDonut'
-import { fmtTokens, fmtUsd } from '../format'
 import { Section, SectionTitle, TwoCol } from '../components/Section'
+import { fmtTokens, fmtUsd } from '../format'
 import { useDashboard } from '../store'
 
 export function Breakdown() {
@@ -21,8 +21,16 @@ export function Breakdown() {
             rowKey={(r) => r.model}
             columns={[
               { key: 'model', header: 'Model' },
-              { key: 'costUsd', header: 'Value', render: (r: (typeof models)[number]) => fmtUsd(r.costUsd) },
-              { key: 'totalTokens', header: 'Tokens', render: (r: (typeof models)[number]) => fmtTokens(r.totalTokens) },
+              {
+                key: 'costUsd',
+                header: 'Value',
+                render: (r: (typeof models)[number]) => fmtUsd(r.costUsd),
+              },
+              {
+                key: 'totalTokens',
+                header: 'Tokens',
+                render: (r: (typeof models)[number]) => fmtTokens(r.totalTokens),
+              },
               { key: 'requests', header: 'Reqs' },
             ]}
           />
@@ -34,8 +42,16 @@ export function Breakdown() {
           rowKey={(r) => r.projectPath}
           columns={[
             { key: 'projectPath', header: 'Project' },
-            { key: 'costUsd', header: 'Value', render: (r: (typeof projects)[number]) => fmtUsd(r.costUsd) },
-            { key: 'totalTokens', header: 'Tokens', render: (r: (typeof projects)[number]) => fmtTokens(r.totalTokens) },
+            {
+              key: 'costUsd',
+              header: 'Value',
+              render: (r: (typeof projects)[number]) => fmtUsd(r.costUsd),
+            },
+            {
+              key: 'totalTokens',
+              header: 'Tokens',
+              render: (r: (typeof projects)[number]) => fmtTokens(r.totalTokens),
+            },
             { key: 'requests', header: 'Reqs' },
           ]}
         />

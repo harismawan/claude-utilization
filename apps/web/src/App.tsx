@@ -90,7 +90,9 @@ export function App() {
           </span>
         </Right>
       </Header>
-      {error ? <div style={{ color: '#FF6B6B', marginBottom: '1rem' }}>API error: {error}</div> : null}
+      {error ? (
+        <div style={{ color: '#FF6B6B', marginBottom: '1rem' }}>API error: {error}</div>
+      ) : null}
       <Overview />
       <UsageGraph />
       <Breakdown />
