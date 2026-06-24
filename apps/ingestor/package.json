@@ -1,5 +1,16 @@
 {
   "name": "claude-util-ingestor",
+  "version": "0.1.0",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "dev": "bun --env-file=../../.env --watch src/index.ts",
+    "start": "bun --env-file=../../.env src/index.ts"
+  },
+  "dependencies": {
+    "claude-util-api": "workspace:*",
+    "claude-util-shared": "workspace:*",
+    "pino": "^10.3.1"
+  },
+  "devDependencies": { "pino-pretty": "^13.1.3" }
 }
