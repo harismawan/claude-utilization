@@ -1,7 +1,8 @@
 # Claude Utilization Dashboard
 
 A self-hosted dashboard for your **Claude Code** usage. It tails the local
-session logs Claude Code writes under `~/.claude`, stores them in Postgres, and
+session logs Claude Code writes under `~/.claude`, stores them in a local
+database (SQLite or Postgres), and
 shows token usage, request volume, per-model / per-project breakdowns, recent
 sessions, and your subscription quota — plus an estimated pay-as-you-go API
 value for the same activity.
@@ -23,28 +24,32 @@ Everything runs on your own machine. No data leaves your host.
 
 ## Stack
 
-Bun · Elysia · Prisma + Postgres · Vite + React · [stamp-ui](https://www.npmjs.com/package/@harismawan/stamp-ui) · recharts.
+Bun · Elysia · Prisma (SQLite **or** Postgres) · Vite + React · [stamp-ui](https://www.npmjs.com/package/@harismawan/stamp-ui) · recharts.
 
 Monorepo (`apps/api`, `apps/ingestor`, `apps/web`, `packages/shared`) managed
 with Bun workspaces.
 
 ## Quick start (local / dev)
 
-Requires [Bun](https://bun.sh) and Docker (for Postgres).
+Requires [Bun](https://bun.sh). The default `.env` uses a local SQLite file, so
+no database server is needed.
 
 ```bash
 git clone https://github.com/harismawan/claude-utilization.git
 cd claude-utilization
-cp .env.example .env          # defaults work for the docker compose Postgres below
+cp .env.example .env          # default DATABASE_URL is a local SQLite file
 
-docker compose up -d          # local Postgres on :5432
 bun install
-bun --filter claude-util-api db:migrate   # name the migration "init"
+bun --filter claude-util-api db:generate  # generate the Prisma client
+bun --filter claude-util-api db:migrate   # create the schema (name it "init")
 bun run dev                   # api + ingestor + web together
 ```
 
 Open <http://localhost:5173>. The ingestor backfills from your existing
 `~/.claude` logs on first run.
+
+Prefer Postgres? Set `DATABASE_URL` to a `postgres://…` URL (a local one is
+available via `docker compose up -d`) before running the migrate step.
 
 ## Configuration
 
@@ -52,7 +57,7 @@ All config is via `.env` (see `.env.example`):
 
 | Variable        | Purpose                                                        | Default                  |
 | --------------- | -------------------------------------------------------------- | ------------------------ |
-| `DATABASE_URL`  | Postgres connection string                                     | local docker compose db  |
+| `DATABASE_URL`  | DB connection — `file:`/`sqlite:` → SQLite, `postgres://` → PG | `file:./data/claude_util.db` |
 | `API_PORT`      | API listen port                                                | `8787`                   |
 | `API_HOST`      | API bind address (`127.0.0.1` local-only, `0.0.0.0` exposed)   | `127.0.0.1`              |
 | `CORS_ORIGIN`   | Comma-separated browser origins allowed to call the API        | dev web origins          |
@@ -60,23 +65,39 @@ All config is via `.env` (see `.env.example`):
 | `VITE_API_BASE` | Build-time absolute API base for the SPA (prod static serve)   | `/api` (dev proxy)       |
 | `CLAUDE_DIR`    | Override the Claude data dir                                   | `~/.claude`              |
 
+## Database drivers
+
+The driver is chosen automatically from the `DATABASE_URL` scheme — the same
+inference is used by the Prisma CLI (`db:generate` / `db:migrate`) and at
+runtime, so one variable controls everything:
+
+| `DATABASE_URL`                          | Driver  | Notes                                            |
+| --------------------------------------- | ------- | ------------------------------------------------ |
+| `file:./data/app.db` / `sqlite:…`       | SQLite  | via libsql (Bun-compatible). Relative paths resolve to the repo root. |
+| `postgres://…` / `postgresql://…`       | Postgres| via `@prisma/adapter-pg`.                        |
+
+Each provider has its own schema and migrations (`prisma/schema.prisma` +
+`prisma/migrations`, `prisma/schema.sqlite.prisma` + `prisma/migrations-sqlite`)
+sharing identical models. The Prisma client is provider-specific, so run
+`db:generate` after switching `DATABASE_URL` between SQLite and Postgres.
+
 ## Production deploy (PM2)
 
-Serves the API, the ingestor, and the prebuilt web `dist` under PM2. Point
-`DATABASE_URL` at your Postgres host and set `VITE_API_BASE` / `CORS_ORIGIN` to
+Serves the API, the ingestor, and the prebuilt web `dist` under PM2. Set
+`DATABASE_URL` (SQLite or Postgres) and point `VITE_API_BASE` / `CORS_ORIGIN` at
 the address browsers will use to reach the API.
 
 ```bash
 cp .env.example .env          # edit DATABASE_URL, VITE_API_BASE, CORS_ORIGIN
 
-# one-time: create the app role + database on your Postgres host (needs admin).
-# The app password is passed in, never stored in the repo.
+# Postgres only — one-time: create the app role + database (needs admin).
+# The app password is passed in, never stored in the repo. (Skip for SQLite.)
 PGPASSWORD=<admin-password> psql -h <db-host> -U postgres -d postgres \
   -v app_pw='<app-db-password>' -f scripts/db-bootstrap.sql
 
 bun install
 bun --filter claude-util-api db:generate
-cd apps/api && bunx prisma migrate deploy --schema prisma/schema.prisma && cd ../..
+cd apps/api && bunx prisma migrate deploy && cd ../..
 bun run --filter claude-util-web build     # builds apps/web/dist, bakes VITE_API_BASE
 
 pm2 start ecosystem.config.cjs
@@ -95,9 +116,9 @@ web origin.
 
 ## Architecture
 
-- `apps/ingestor` — tails `~/.claude/projects/**/*.jsonl` into Postgres and
+- `apps/ingestor` — tails `~/.claude/projects/**/*.jsonl` into the database and
   polls the Claude usage endpoint (cached, backs off on 429). The only writer.
-- `apps/api` — Elysia REST API over Postgres aggregates (`/swagger` for docs).
+- `apps/api` — Elysia REST API over database aggregates (`/swagger` for docs).
 - `apps/web` — React dashboard, polls the API.
 - `packages/shared` — pricing, parsing, 5-hour blocks, quota normalization, theme.
 
@@ -110,7 +131,7 @@ web origin.
   (written by Claude Code when signed in). Without it, all local usage analytics
   still work — only the quota sections are hidden.
 - **Privacy.** The app only reads your local Claude logs and talks to your own
-  Postgres. Nothing is sent anywhere except Claude's own usage endpoint for
+  database. Nothing is sent anywhere except Claude's own usage endpoint for
   quota.
 
 ## Disclaimer
