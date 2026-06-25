@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import styled from 'styled-components'
 import { Breakdown } from './sections/Breakdown'
 import { Overview } from './sections/Overview'
+import { Projects } from './sections/Projects'
 import { QuotaHistory } from './sections/QuotaHistory'
 import { Sessions } from './sections/Sessions'
 import { UsageGraph } from './sections/UsageGraph'
@@ -103,8 +104,9 @@ export function App() {
       <Overview />
       <UsageGraph />
       <Breakdown />
-      <QuotaHistory />
       <Sessions />
+      <QuotaHistory />
+      <Projects />
     </Shell>
   )
 }

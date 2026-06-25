@@ -6,7 +6,6 @@ import { useDashboard } from '../store'
 
 export function Breakdown() {
   const models = useDashboard((s) => s.models)
-  const projects = useDashboard((s) => s.projects)
 
   return (
     <Section>
@@ -36,27 +35,6 @@ export function Breakdown() {
           />
         </Card>
       </TwoCol>
-      <Card>
-        <DataTable
-          data={projects}
-          pageSize={5}
-          rowKey={(r) => r.projectPath}
-          columns={[
-            { key: 'projectPath', header: 'Project' },
-            {
-              key: 'costUsd',
-              header: 'Value',
-              render: (r: (typeof projects)[number]) => fmtUsd(r.costUsd),
-            },
-            {
-              key: 'totalTokens',
-              header: 'Tokens',
-              render: (r: (typeof projects)[number]) => fmtTokens(r.totalTokens),
-            },
-            { key: 'requests', header: 'Reqs' },
-          ]}
-        />
-      </Card>
     </Section>
   )
 }
