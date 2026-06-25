@@ -18,13 +18,20 @@ export function QuotaHistoryChart({ rows }: { rows: QuotaHistoryRow[] }) {
     fiveHour: r.fiveHourLimit > 0 ? (r.fiveHourUsed / r.fiveHourLimit) * 100 : 0,
     weekly: r.weeklyLimit > 0 ? (r.weeklyUsed / r.weeklyLimit) * 100 : 0,
   }))
+  // Past 24h of history → label by day instead of hour.
+  const span =
+    rows.length > 1
+      ? new Date(rows[rows.length - 1]!.capturedAt).getTime() -
+        new Date(rows[0]!.capturedAt).getTime()
+      : 0
+  const gran: 'hour' | 'day' = span > 24 * 3_600_000 ? 'day' : 'hour'
   return (
     <ResponsiveContainer width="100%" height={260}>
       <LineChart data={data} margin={{ top: 6, right: 10, left: 0, bottom: 0 }}>
         <CartesianGrid stroke={t.colors.borderSoft} vertical={false} />
         <XAxis
           dataKey="t"
-          tickFormatter={(v: string) => fmtBucket(v, 'hour')}
+          tickFormatter={(v: string) => fmtBucket(v, gran)}
           tick={{ fill: t.colors.textMuted, fontSize: 12 }}
           axisLine={{ stroke: t.colors.border, strokeWidth: 2 }}
           tickLine={false}
@@ -46,7 +53,7 @@ export function QuotaHistoryChart({ rows }: { rows: QuotaHistoryRow[] }) {
             fontWeight: 600,
           }}
           formatter={(v) => `${Number(v).toFixed(0)}%`}
-          labelFormatter={(v) => fmtBucket(String(v), 'hour')}
+          labelFormatter={(v) => fmtBucket(String(v), gran)}
           cursor={{ stroke: t.colors.border }}
         />
         <Line
