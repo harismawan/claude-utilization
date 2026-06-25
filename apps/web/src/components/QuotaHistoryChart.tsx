@@ -8,23 +8,18 @@ import {
   YAxis,
 } from 'recharts'
 import { useTheme } from 'styled-components'
-import type { QuotaHistoryRow } from '../api'
+import type { QuotaHistoryRow, Range } from '../api'
 import { fmtBucket } from '../format'
 
-export function QuotaHistoryChart({ rows }: { rows: QuotaHistoryRow[] }) {
+export function QuotaHistoryChart({ rows, range }: { rows: QuotaHistoryRow[]; range: Range }) {
   const t = useTheme()
   const data = rows.map((r) => ({
     t: r.capturedAt,
     fiveHour: r.fiveHourLimit > 0 ? (r.fiveHourUsed / r.fiveHourLimit) * 100 : 0,
     weekly: r.weeklyLimit > 0 ? (r.weeklyUsed / r.weeklyLimit) * 100 : 0,
   }))
-  // Past 24h of history → label by day instead of hour.
-  const span =
-    rows.length > 1
-      ? new Date(rows[rows.length - 1]!.capturedAt).getTime() -
-        new Date(rows[0]!.capturedAt).getTime()
-      : 0
-  const gran: 'hour' | 'day' = span > 24 * 3_600_000 ? 'day' : 'hour'
+  // Ranges longer than a day (7d/30d/all) label by day; "today" (24h) by hour.
+  const gran: 'hour' | 'day' = range === 'today' ? 'hour' : 'day'
   return (
     <ResponsiveContainer width="100%" height={260}>
       <LineChart data={data} margin={{ top: 6, right: 10, left: 0, bottom: 0 }}>
