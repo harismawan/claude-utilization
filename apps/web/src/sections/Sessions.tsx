@@ -10,6 +10,7 @@ export function Sessions() {
       <SectionTitle>Recent sessions</SectionTitle>
       <Card>
         <DataTable
+          pageSize={5}
           data={sessions.map((s) => ({
             ...s,
             value: fmtUsd(s.costUsd),

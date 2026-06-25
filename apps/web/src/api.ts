@@ -1,4 +1,6 @@
-const BASE = '/api'
+// Dev: '/api' goes through Vite's proxy. Prod (static dist served by pm2 has no
+// proxy) needs an absolute API origin, set at build time via VITE_API_BASE.
+const BASE = import.meta.env.VITE_API_BASE ?? '/api'
 
 async function get<T>(path: string): Promise<T> {
   const res = await fetch(`${BASE}${path}`)

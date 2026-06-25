@@ -3,4 +3,10 @@ dist
 .env
 *.log
 apps/api/src/generated
+# local SQLite databases (and libsql sidecar files)
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+data/
 .DS_Store
