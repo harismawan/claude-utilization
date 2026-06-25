@@ -1,6 +1,6 @@
 import { Card, DataTable } from '@harismawan/stamp-ui'
 import { Section, SectionTitle } from '../components/Section'
-import { fmtTokens, fmtUsd } from '../format'
+import { fmtRelative, fmtTokens, fmtUsd } from '../format'
 import { useDashboard } from '../store'
 
 export function Sessions() {
@@ -15,7 +15,7 @@ export function Sessions() {
             ...s,
             value: fmtUsd(s.costUsd),
             tokens: fmtTokens(s.totalTokens),
-            when: new Date(s.lastTs).toLocaleString(),
+            when: fmtRelative(s.lastTs),
           }))}
           rowKey={(r) => r.sessionId}
           columns={[

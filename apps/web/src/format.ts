@@ -43,6 +43,26 @@ export function fmtBucket(v: string, granularity: 'hour' | 'day' = 'day'): strin
   return (granularity === 'hour' ? hourFmt : dayFmt).format(d)
 }
 
+// Relative time: "just now", "5m ago", "3h ago", "2d ago".
+const relTime = new Intl.RelativeTimeFormat('en', { numeric: 'auto', style: 'short' })
+const REL_STEPS: [Intl.RelativeTimeFormatUnit, number][] = [
+  ['year', 31_536_000_000],
+  ['month', 2_592_000_000],
+  ['week', 604_800_000],
+  ['day', 86_400_000],
+  ['hour', 3_600_000],
+  ['minute', 60_000],
+]
+export function fmtRelative(target: Date | string | null): string {
+  if (!target) return '—'
+  const ms = new Date(target).getTime() - Date.now()
+  if (Math.abs(ms) < 60_000) return 'just now'
+  for (const [unit, step] of REL_STEPS) {
+    if (Math.abs(ms) >= step) return relTime.format(Math.round(ms / step), unit)
+  }
+  return relTime.format(Math.round(ms / 60_000), 'minute')
+}
+
 export function fmtCountdown(target: Date | string | null): string {
   if (!target) return '—'
   const ms = new Date(target).getTime() - Date.now()
