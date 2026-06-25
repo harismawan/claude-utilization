@@ -1,4 +1,5 @@
-import { Badge } from '@harismawan/stamp-ui'
+import { Badge, ChipGroup, useThemeStore } from '@harismawan/stamp-ui'
+import { Moon, Sun } from 'lucide-react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
 import { Breakdown } from './sections/Breakdown'
@@ -46,16 +47,15 @@ const Dot = styled.span<{ $stale: boolean }>`
   background: ${(p) => (p.$stale ? '#FF9F43' : '#1FAB6E')};
   display: inline-block;
 `
-const RangeBtns = styled.div`
-  display: flex;
-  gap: 0.25rem;
-`
-const RangeBtn = styled.button<{ $active: boolean }>`
-  background: ${(p) => (p.$active ? '#FFDE15' : 'transparent')};
-  color: ${(p) => (p.$active ? '#111' : p.theme.colors.text)};
+const IconBtn = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: ${(p) => p.theme.colors.text};
   border: 1px solid ${(p) => p.theme.colors.border};
   border-radius: 6px;
-  padding: 0.25rem 0.6rem;
+  padding: 0.3rem 0.45rem;
   cursor: pointer;
 `
 
@@ -66,6 +66,8 @@ export function App() {
   const setRange = useDashboard((s) => s.setRange)
   const quota = useDashboard((s) => s.quota)
   const error = useDashboard((s) => s.error)
+  const mode = useThemeStore((s) => s.mode)
+  const toggleMode = useThemeStore((s) => s.toggle)
   useEffect(() => startPolling(), [])
 
   const connected = quota?.connected === true
@@ -78,16 +80,21 @@ export function App() {
         <Brand>Claude Utilization</Brand>
         <Right>
           {tier ? <Badge>{tier.toUpperCase()}</Badge> : null}
-          <RangeBtns>
-            {RANGES.map((r) => (
-              <RangeBtn key={r} $active={range === r} onClick={() => setRange(r)}>
-                {r}
-              </RangeBtn>
-            ))}
-          </RangeBtns>
+          <ChipGroup
+            options={[...RANGES]}
+            value={range}
+            onChange={(v) => setRange(v as (typeof RANGES)[number])}
+          />
           <span>
             <Dot $stale={stale} /> {connected ? (stale ? 'stale' : 'live') : 'no quota'}
           </span>
+          <IconBtn
+            onClick={toggleMode}
+            aria-label={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}
+            title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {mode === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </IconBtn>
         </Right>
       </Header>
       {error ? (

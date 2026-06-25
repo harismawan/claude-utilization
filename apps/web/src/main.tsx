@@ -5,7 +5,8 @@ import { App } from './App'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <StampProvider mode="dark">
+    {/* No `mode` prop → follows the persisted useThemeStore (toggled in the header). */}
+    <StampProvider>
       <App />
     </StampProvider>
   </StrictMode>,

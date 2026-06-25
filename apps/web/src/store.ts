@@ -31,7 +31,7 @@ interface DashState {
 }
 
 export const useDashboard = create<DashState>((set, getState) => ({
-  range: '7d',
+  range: '30d',
   granularity: 'day',
   summary: null,
   timeseries: [],

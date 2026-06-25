@@ -32,7 +32,7 @@ export function UsageGraph() {
         />
       </div>
       <Card>
-        <UsageAreaChart points={points} metric={metric} />
+        <UsageAreaChart points={points} metric={metric} granularity={granularity} />
       </Card>
     </Section>
   )

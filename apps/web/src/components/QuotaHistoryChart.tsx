@@ -7,23 +7,66 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { useTheme } from 'styled-components'
 import type { QuotaHistoryRow } from '../api'
+import { fmtBucket } from '../format'
 
 export function QuotaHistoryChart({ rows }: { rows: QuotaHistoryRow[] }) {
+  const t = useTheme()
   const data = rows.map((r) => ({
-    t: r.capturedAt.slice(5, 16),
+    t: r.capturedAt,
     fiveHour: r.fiveHourLimit > 0 ? (r.fiveHourUsed / r.fiveHourLimit) * 100 : 0,
     weekly: r.weeklyLimit > 0 ? (r.weeklyUsed / r.weeklyLimit) * 100 : 0,
   }))
   return (
     <ResponsiveContainer width="100%" height={260}>
-      <LineChart data={data}>
-        <CartesianGrid strokeOpacity={0.1} />
-        <XAxis dataKey="t" fontSize={11} />
-        <YAxis domain={[0, 100]} fontSize={11} unit="%" />
-        <Tooltip />
-        <Line type="monotone" dataKey="fiveHour" stroke="#FFDE15" dot={false} name="5-hour %" />
-        <Line type="monotone" dataKey="weekly" stroke="#28A6E0" dot={false} name="weekly %" />
+      <LineChart data={data} margin={{ top: 6, right: 10, left: 0, bottom: 0 }}>
+        <CartesianGrid stroke={t.colors.borderSoft} vertical={false} />
+        <XAxis
+          dataKey="t"
+          tickFormatter={(v: string) => fmtBucket(v, 'hour')}
+          tick={{ fill: t.colors.textMuted, fontSize: 12 }}
+          axisLine={{ stroke: t.colors.border, strokeWidth: 2 }}
+          tickLine={false}
+        />
+        <YAxis
+          domain={[0, 100]}
+          tickFormatter={(v: number) => `${v}%`}
+          tick={{ fill: t.colors.textMuted, fontSize: 12 }}
+          axisLine={false}
+          tickLine={false}
+          width={48}
+        />
+        <Tooltip
+          contentStyle={{
+            background: t.colors.surface,
+            border: `2px solid ${t.colors.border}`,
+            borderRadius: t.radii.md,
+            fontFamily: t.font.body,
+            fontWeight: 600,
+          }}
+          formatter={(v) => `${Number(v).toFixed(0)}%`}
+          labelFormatter={(v) => fmtBucket(String(v), 'hour')}
+          cursor={{ stroke: t.colors.border }}
+        />
+        <Line
+          type="monotone"
+          dataKey="fiveHour"
+          stroke={t.colors.primary}
+          strokeWidth={3}
+          dot={false}
+          activeDot={{ r: 5, fill: t.colors.primary, stroke: t.colors.border, strokeWidth: 2 }}
+          name="5-hour %"
+        />
+        <Line
+          type="monotone"
+          dataKey="weekly"
+          stroke={t.colors.accent}
+          strokeWidth={3}
+          dot={false}
+          activeDot={{ r: 5, fill: t.colors.accent, stroke: t.colors.border, strokeWidth: 2 }}
+          name="weekly %"
+        />
       </LineChart>
     </ResponsiveContainer>
   )

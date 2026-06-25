@@ -39,6 +39,7 @@ export function Breakdown() {
       <Card>
         <DataTable
           data={projects}
+          pageSize={5}
           rowKey={(r) => r.projectPath}
           columns={[
             { key: 'projectPath', header: 'Project' },
