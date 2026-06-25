@@ -8,7 +8,7 @@ export function UsageGraph() {
   const points = useDashboard((s) => s.timeseries)
   const granularity = useDashboard((s) => s.granularity)
   const setGranularity = useDashboard((s) => s.setGranularity)
-  const [metric, setMetric] = useState<'costUsd' | 'totalTokens'>('costUsd')
+  const [metric, setMetric] = useState<'costUsd' | 'totalTokens'>('totalTokens')
 
   return (
     <Section>
