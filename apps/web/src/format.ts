@@ -47,7 +47,9 @@ export function fmtCountdown(target: Date | string | null): string {
   if (!target) return '—'
   const ms = new Date(target).getTime() - Date.now()
   if (ms <= 0) return 'now'
-  const h = Math.floor(ms / 3_600_000)
+  const d = Math.floor(ms / 86_400_000)
+  const h = Math.floor((ms % 86_400_000) / 3_600_000)
   const m = Math.floor((ms % 3_600_000) / 60_000)
+  if (d > 0) return `${d}d ${h}h`
   return h > 0 ? `${h}h ${m}m` : `${m}m`
 }
