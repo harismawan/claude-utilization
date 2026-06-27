@@ -24,7 +24,16 @@ function pivot(points: TimePoint[], metric: 'costUsd' | 'totalTokens') {
     row[p.model] = ((row[p.model] as number) ?? 0) + p[metric]
     byBucket.set(p.bucket, row)
   }
-  return { rows: [...byBucket.values()], models: [...models] }
+  const modelList = [...models]
+  const rows = [...byBucket.values()]
+  // Zero-fill missing models so stacked areas share a consistent baseline
+  // (undefined values break the stack offset and make areas overlap).
+  for (const row of rows) {
+    for (const m of modelList) {
+      if (row[m] === undefined) row[m] = 0
+    }
+  }
+  return { rows, models: modelList }
 }
 
 export function UsageAreaChart({
@@ -75,7 +84,7 @@ export function UsageAreaChart({
         {models.map((m) => (
           <Area
             key={m}
-            type="monotone"
+            type="linear"
             dataKey={m}
             stackId="1"
             stroke={colorForModel(m)}
